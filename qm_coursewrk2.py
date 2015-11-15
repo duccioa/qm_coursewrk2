@@ -30,13 +30,14 @@ def ks_norm(x):
 def bootstrap_KS_norm(x, y, m, n):
     A = np.random.normal(loc =x, scale =y, size=(m, n))#bootstrp matrix: m is the number of row, n the number of columns
     KS_synthetic = np.apply_along_axis(ks_norm, axis = 1, arr = A )
+    print "A dimensions: ", A.shape#debug
     print "KS_synthetic dimensions: ", KS_synthetic.shape#debug
     return KS_synthetic     
 
 
 ##Calculate P-value
 #ks_emp is the KS statistic to be tested - from empirical data
-#ks_synth is the array of KS statistics created with the bootstrapping
+#ks_synth is the single dimensions array of KS statistics created with the bootstrapping
 def p_calc(ks_emp, ks_synth):
     ks_synth.sort()
     count = 0
@@ -47,16 +48,17 @@ def p_calc(ks_emp, ks_synth):
         else:
             break
     print "DEBUG Count: ", count #debug
-    proportion = float(count) / np.size(KS_synthetic)
+    proportion = float(count) / np.size(ks_synth)
     print "DEBUG proportion: ", proportion #debug
     p_value = 1-proportion
+    print "p-value: ", p_value
     return p_value
 
 ##Evaluate the p-value
 #H0: the distribution of the data follow the proposed theoretical distribution
 #H1: it does not
 #x is the p-value to be tested, y is the significance level desired
-def eval_pvalue(x, y):
+def eval_pvalue(x, y = 0.05):
     if x >= y:
         print "P-value: ", x, " H0 cannot be rejected"
         
@@ -66,14 +68,14 @@ def eval_pvalue(x, y):
 ### EMPIRICAL DATA ###
 
 #define the data
-data_size = 100 #type size
+data_size = 5000 #type size
 data_mean = 20 #type data mean
 data_std = 2 #type data standard deviation
 data = np.random.normal(loc =data_mean, scale =data_std, size=data_size)#normally distributed data
 #data = np.random.exponential(scale = 1.2, size = data_size)#random data from exponetial distribution #debug
 
 
-### ANALYSIS ###
+### PLOT DATA ###
 
 #plot data
 nbins = 15
@@ -87,12 +89,11 @@ plt.figure(2)
 plt.title("Data CDF")
 plt.step(data, cum_freq_plot, 'b-', where = 'post')
 
-#KS statistic for the data
-KS_test = ks_norm(data)
-#Bootstrap KS
-n_it = 1000 #define number of iteration for bootstrp
-s_size = np.size(data) #define sample size for each iteration
-KS_synthetic = bootstrap_KS_norm(np.mean(data), np.std(data), s_size, n_it)
-print "DEBUG KS_synthetic size: ", KS_synthetic.shape #debug
-pv = p_calc(KS_test, KS_synthetic)
-eval_pvalue(pv, 0.05)
+### ANALYSIS ###
+num_it = 5000#number of iterations for the bootstrapping
+
+KS_data = ks_norm(data)#empirical ks statistic
+KS_synth = bootstrap_KS_norm(data_mean, data_std, num_it, data_size)#synthetic KS statistics
+KS_pvalue = p_calc(KS_data, KS_synth)#calculate the p-value
+eval_pvalue(KS_pvalue)#evaluate the p-value (default significance level 0.05)
+
