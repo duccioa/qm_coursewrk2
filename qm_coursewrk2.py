@@ -68,7 +68,7 @@ def eval_pvalue(x, y = 0.05):
 ### EMPIRICAL DATA ###
 
 #define the data
-data_size = 5000 #type size
+data_size = 100 #type size
 data_mean = 20 #type data mean
 data_std = 2 #type data standard deviation
 data = np.random.normal(loc =data_mean, scale =data_std, size=data_size)#normally distributed data
@@ -90,7 +90,7 @@ plt.title("Data CDF")
 plt.step(data, cum_freq_plot, 'b-', where = 'post')
 
 ### ANALYSIS ###
-num_it = 5000#number of iterations for the bootstrapping
+num_it = 10000#number of iterations for the bootstrapping
 
 KS_data = ks_norm(data)#empirical ks statistic
 KS_synth = bootstrap_KS_norm(data_mean, data_std, num_it, data_size)#synthetic KS statistics
