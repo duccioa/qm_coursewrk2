@@ -1,12 +1,10 @@
 import scipy as sp
 import numpy as np
-import random as rn
 import scipy.stats as sps
-import csv 
 import matplotlib.pyplot as plt
 import os
 
-#Working directory
+#Working directory (please enter your working directory)
 os.chdir('/Users/duccioa/CLOUD/C07_UCL_SmartCities/QuantitativeMethods/qm_coursewrk2')
 
 #Load data
